@@ -2,7 +2,7 @@
  *  ZWN-SC7 Enerwave 7 Button Scene Controller
  *  By matt based on the work of Brian Dahlem
  *
- *  Copyright 2014 Brian Dahlem
+ *  Version 1.01  12/24/2014
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -23,12 +23,10 @@
         capability "Configuration"
         capability "Sensor"
 
-        attribute "associatedLoad", "STRING"
-        attribute "associatedLoadId", "STRING"
+
         attribute "currentButton", "STRING"
         attribute "numButtons", "STRING"
 
-        command "associateLoad", ["NUMBER"]
 
     fingerprint deviceId: "0x0100", inClusters:"0x85, 0x2D, 0x7C, 0x77, 0x82, 0x73, 0x86, 0x72, 0x91, 0xEF, 0x2B, 0x2C"
 
@@ -39,10 +37,10 @@
     status "button 2 pushed":  "command: 2B01, payload: 02 FF"
     status "button 3 pushed":  "command: 2B01, payload: 03 FF"
     status "button 4 pushed":  "command: 2B01, payload: 04 FF"
-        status "button 5 pushed":  "command: 2B01, payload: 05 FF"
-        status "button 6 pushed":  "command: 2B01, payload: 06 FF"
-        status "button 7 pushed":  "command: 2B01, payload: 07 FF"
-        status "button released":  "command: 2C02, payload: 00"
+    status "button 5 pushed":  "command: 2B01, payload: 05 FF"
+    status "button 6 pushed":  "command: 2B01, payload: 06 FF"
+    status "button 7 pushed":  "command: 2B01, payload: 07 FF"
+    status "button released":  "command: 2C02, payload: 00"
   }
 
   tiles {
@@ -52,9 +50,9 @@
       state "button 2", label: "2", icon: "st.Weather.weather14", backgroundColor: "#79b821"
       state "button 3", label: "3", icon: "st.Weather.weather14", backgroundColor: "#79b821"
       state "button 4", label: "4", icon: "st.Weather.weather14", backgroundColor: "#79b821"
-            state "button 5", label: "5", icon: "st.Weather.weather14", backgroundColor: "#79b821"
-            state "button 6", label: "6", icon: "st.Weather.weather14", backgroundColor: "#79b821"
-            state "button 7", label: "7", icon: "st.Weather.weather14", backgroundColor: "#79b821"
+      state "button 5", label: "5", icon: "st.Weather.weather14", backgroundColor: "#79b821"
+      state "button 6", label: "6", icon: "st.Weather.weather14", backgroundColor: "#79b821"
+      state "button 7", label: "7", icon: "st.Weather.weather14", backgroundColor: "#79b821"
 
 
     }
@@ -197,9 +195,9 @@ def zwaveEvent(physicalgraph.zwave.Command cmd) {
 def configurationCmds() {
   // Always check the manufacturer and the number of groupings allowed
   def commands = [
-      zwave.manufacturerSpecificV1.manufacturerSpecificGet().format(),
+    zwave.manufacturerSpecificV1.manufacturerSpecificGet().format(),
     zwave.associationV1.associationGroupingsGet().format(),
-        zwave.sceneControllerConfV1.sceneControllerConfSet(groupId:1, sceneId:1).format(),
+    zwave.sceneControllerConfV1.sceneControllerConfSet(groupId:1, sceneId:1).format(),
     zwave.sceneControllerConfV1.sceneControllerConfSet(groupId:2, sceneId:2).format(),
     zwave.sceneControllerConfV1.sceneControllerConfSet(groupId:3, sceneId:3).format(),
     zwave.sceneControllerConfV1.sceneControllerConfSet(groupId:4, sceneId:4).format(),
@@ -222,56 +220,17 @@ def configure() {
 }
 
 
-// REMOVE THIS NO LOAD ON DEVICE
-// Associate a load with the button, or clear the association if nodeid = 0
 //
-// nodeId:  a hex string, ie 4E for the Z-Wave node number
-def associateLoad(String nodeId) {
-  def node = integerhex(nodeId)
-
-  if (node != 0) {
-      updateState("associatedLoad", "1")
-        updateState("associatedLoadId", nodeId)
-    log.debug "Node $nodeId associated with button 1"
-    }
-    else {
-      updateState("associatedLoad", "0")
-        log.debug "No nodes associated with button 1"
-   }
-
-     configure()
-}
-
 // Associate the hub with the buttons on the device, so we will get status updates
 def associateHub() {
     def commands = []
 
     // Loop through all the buttons on the controller
     for (def buttonNum = 1; buttonNum <= integer(getDataByName("numButtons")); buttonNum++) {
-      // For the first button:
-      if (buttonNum == 1) {
-            // If there is an associated load
-            if (getDataByName("associatedLoad") != "0") {
-                // Unassociate the hub from button 0 and associate the load.  That way we won't get button presses for the switch
-                commands << zwave.associationV1.associationRemove(groupingIdentifier: buttonNum, nodeId: zwaveHubNodeId).format()
-                commands << zwave.associationV1.associationSet(groupingIdentifier: buttonNum, nodeId: integerhex(getDataByName("associatedLoadId"))).format()
-            }
-            else {
-                // If there is no associated load, associate the hub with button 1 so we receive button presses
-                commands << zwave.associationV1.associationSet(groupingIdentifier: buttonNum, nodeId: zwaveHubNodeId).format()
 
-                // If there is an associatedLoad stored in the device, disassociate it from the button to avoid weirdness.
-                if (getDataByName("associatedLoadId")) {
-                    commands << zwave.associationV1.associationRemove(groupingIdentifier: buttonNum, nodeId: integerhex(getDataByName("associatedLoadId"))).format()
-                }
-                commands << zwave.associationV1.associationGet(groupingIdentifier: buttonNum).format()
-            }
-        }
-        // For the other buttons:
-        else {
           // Associate the hub with the button so we will get status updates
           commands << zwave.associationV1.associationSet(groupingIdentifier: buttonNum, nodeId: zwaveHubNodeId).format()
-        }
+
   }
 
     return commands

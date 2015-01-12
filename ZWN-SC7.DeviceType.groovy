@@ -1,8 +1,10 @@
 /**
  *  ZWN-SC7 Enerwave 7 Button Scene Controller
- *  By matt based on the work of Brian Dahlem
  *
- *  Version 1.01  12/24/2014
+ *  Created December 18 2014
+ *  Last Updated January 11 2015
+ *
+ *  Copyright Matt Frank based on the work of Brian Dahlem
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -21,6 +23,7 @@
     capability "Actuator"
         capability "Button"
         capability "Configuration"
+       capability "Indicator"
         capability "Sensor"
 
 
@@ -28,8 +31,7 @@
         attribute "numButtons", "STRING"
 
 
-    fingerprint deviceId: "0x0100", inClusters:"0x85, 0x2D, 0x7C, 0x77, 0x82, 0x73, 0x86, 0x72, 0x91, 0xEF, 0x2B, 0x2C"
-
+    fingerprint deviceId: "0x0202", inClusters:"0x21, 0x2D, 0x85, 0x86, 0x72"
   }
 
   simulator {

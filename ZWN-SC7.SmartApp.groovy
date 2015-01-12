@@ -1,8 +1,10 @@
 /**
- *	Button Controller
+ *	Button Controller App for ZWN-SC7
  *
- *	Author: Matt based on VRCS Button Controller by Brian Dahlem, based on SmartThings Button Controller
- *	Date: 2014-12-18
+ *	Author: Matt Frank based on VRCS Button Controller by Brian Dahlem, based on SmartThings Button Controller
+ *	Date Created: 2014-12-18
+ *  Last Updated: 2014-12-18
+ *
  */
 definition(
     name: "ZWN-SC7	 Button Controller",

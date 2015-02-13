@@ -3,7 +3,7 @@
  *
  *	Author: Matt Frank based on VRCS Button Controller by Brian Dahlem, based on SmartThings Button Controller
  *	Date Created: 2014-12-18
- *  Last Updated: 2015-01-11
+ *  Last Updated: 2015-02-13
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -19,18 +19,17 @@
  metadata {
   // Automatically generated. Make future change here.
   definition (name: "ZWN-SC7 Enerwave 7 Button Scene Controller", namespace: "mattjfrank", author: "Matt Frank") {
-    capability "Actuator"
+        capability "Actuator"
         capability "Button"
         capability "Configuration"
-       capability "Indicator"
+        capability "Indicator"
         capability "Sensor"
-
 
         attribute "currentButton", "STRING"
         attribute "numButtons", "STRING"
 
-
     fingerprint deviceId: "0x0202", inClusters:"0x21, 0x2D, 0x85, 0x86, 0x72"
+    fingerprint deviceId: "0x0202", inClusters:"0x2D, 0x85, 0x86, 0x72"
   }
 
   simulator {

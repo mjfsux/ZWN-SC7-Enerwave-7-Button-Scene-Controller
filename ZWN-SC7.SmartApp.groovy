@@ -146,7 +146,7 @@ def buttonConfigured(idx) {
 def buttonEvent(evt){
   log.debug "buttonEvent"
   if(allOk) {
-    evt.jsonData.buttonNumber
+    def buttonNumber = evt.jsonData.buttonNumber
     log.debug "buttonEvent: $evt.name - ($evt.data)"
     log.debug "button: $buttonNumber"
 

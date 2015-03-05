@@ -3,7 +3,7 @@
  *
  *	Author: Matt Frank based on VRCS Button Controller by Brian Dahlem, based on SmartThings Button Controller
  *	Date Created: 2014-12-18
- *  Last Updated: 2014-12-18
+ *  Last Updated: 2015-03-05
  *
  */
 definition(
@@ -146,7 +146,7 @@ def buttonConfigured(idx) {
 def buttonEvent(evt){
   log.debug "buttonEvent"
   if(allOk) {
-    def buttonNumber = evt.data // why doesn't jsonData work? always returning [:]
+    evt.jsonData.buttonNumber
     log.debug "buttonEvent: $evt.name - ($evt.data)"
     log.debug "button: $buttonNumber"
 

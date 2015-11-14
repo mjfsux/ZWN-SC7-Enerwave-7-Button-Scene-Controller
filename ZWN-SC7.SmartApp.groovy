@@ -3,7 +3,9 @@
  *
  *	Author: Matt Frank based on VRCS Button Controller by Brian Dahlem, based on SmartThings Button Controller
  *	Date Created: 2014-12-18
- *  Last Updated: 2015-10-05
+ *  	Last Updated: 2015-11-14
+ * 
+ * 	Contributions from erocm1231 @ SmartThings Community
  *
  */
 definition(
@@ -31,6 +33,9 @@ def selectButton() {
   dynamicPage(name: "selectButton", title: "First, select which ZWN-SC7", nextPage: "configureButton1", uninstall: configured()) {
     section {
       input "buttonDevice", "capability.button", title: "Controller", multiple: false, required: true
+    }
+    section(title: "Advanced", hideable: true, hidden: true) {
+      input "debounce", "number", title: "Debounce time in milliseconds", required: true, value: 3000
     }
 
 
@@ -146,15 +151,24 @@ def buttonConfigured(idx) {
 def buttonEvent(evt){
   log.debug "buttonEvent"
   if(allOk) {
-    def buttonNumber = evt.jsonData.buttonNumber
-    log.debug "buttonEvent: $evt.name - ($evt.data)"
-    log.debug "button: $buttonNumber"
+      def buttonNumber = evt.jsonData.buttonNumber
+      def firstEventId = 0
+	  def value = evt.value
+	  //log.debug "buttonEvent: $evt.name = $evt.value ($evt.data)"
+	  log.debug "button: $buttonNumber, value: $value"
+	  def recentEvents = buttonDevice.eventsSince(new Date(now() - debounce)).findAll{it.value == evt.value && it.data == evt.data}
+	  log.debug "Found ${recentEvents.size()?:0} events in past ${debounce/1000} seconds"
+      if (recentEvents.size() != 0){
+          log.debug "First Event ID: ${recentEvents[recentEvents.size() - 1].id}"
+          firstEventId = recentEvents[recentEvents.size() - 1].id
+      }
+      else {
+          firstEventId = 0
+      }
+        
+      log.debug "This Event ID: ${evt.id}"
 
-	
-    def recentEvents = buttonDevice.eventsSince(new Date(now() - 1000)).findAll{it.value == evt.value && it.data == evt.data}
-    log.debug "Found ${recentEvents.size()?:0} events in past 1 seconds"
-
-    if(recentEvents.size <= 3){
+      if(firstEventId == evt.id){
       switch(buttonNumber) {
         case ~/.*1.*/:
           executeHandlers(1)
@@ -178,9 +192,12 @@ def buttonEvent(evt){
           executeHandlers(7)
           break
       }
+    } else if (firstEventId == 0) {
+      log.debug "No events found. Possible SmartThings latency"
     } else {
-      log.debug "Found recent button press events for $buttonNumber with value $value"
+      log.debug "Duplicate button press found. Not executing handlers"
     }
+    
   }
     else {
       log.debug "NotOK"

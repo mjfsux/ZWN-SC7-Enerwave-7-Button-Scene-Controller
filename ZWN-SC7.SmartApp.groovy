@@ -159,8 +159,8 @@ def buttonEvent(evt){
 	  def recentEvents = buttonDevice.eventsSince(new Date(now() - debounce)).findAll{it.value == evt.value && it.data == evt.data}
 	  log.debug "Found ${recentEvents.size()?:0} events in past ${debounce/1000} seconds"
       if (recentEvents.size() != 0){
-          log.debug "First Event ID: ${recentEvents[recentEvents.size() - 1].id}"
-          firstEventId = recentEvents[recentEvents.size() - 1].id
+          log.debug "First Event ID: ${recentEvents[0].id}"
+          firstEventId = recentEvents[0].id
       }
       else {
           firstEventId = 0

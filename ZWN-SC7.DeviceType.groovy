@@ -171,7 +171,7 @@ def zwaveEvent(physicalgraph.zwave.commands.associationv2.AssociationGroupingsRe
   def response = []
 
     log.debug "${getDataByName("numButtons")} buttons stored"
-  if ((getDataByName("numButtons") != "$cmd.supportedGroupings") || (getDataByName("numberOfButtons") != (int) cmd.supportedGroupings) {
+  if ((getDataByName("numButtons") != "$cmd.supportedGroupings") || (getDataByName("numberOfButtons") != (int) cmd.supportedGroupings)) {
         updateState("numButtons", "$cmd.supportedGroupings")
         updateState("numberOfButtons", (int) cmd.supportedGroupings)
         log.debug "${cmd.supportedGroupings} groups available"

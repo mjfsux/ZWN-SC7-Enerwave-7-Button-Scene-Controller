@@ -27,6 +27,7 @@
 
         attribute "currentButton", "STRING"
         attribute "numButtons", "STRING"
+        attribute "numberOfButtons", "NUMBER"
 
     fingerprint deviceId: "0x0202", inClusters:"0x21, 0x2D, 0x85, 0x86, 0x72"
     fingerprint deviceId: "0x0202", inClusters:"0x2D, 0x85, 0x86, 0x72"
@@ -170,15 +171,18 @@ def zwaveEvent(physicalgraph.zwave.commands.associationv2.AssociationGroupingsRe
   def response = []
 
     log.debug "${getDataByName("numButtons")} buttons stored"
-  if (getDataByName("numButtons") != "$cmd.supportedGroupings") {
-    updateState("numButtons", "$cmd.supportedGroupings")
+  if ((getDataByName("numButtons") != "$cmd.supportedGroupings") || (getDataByName("numberOfButtons") != (int) cmd.supportedGroupings) {
+        updateState("numButtons", "$cmd.supportedGroupings")
+        updateState("numberOfButtons", (int) cmd.supportedGroupings)
         log.debug "${cmd.supportedGroupings} groups available"
         response << createEvent(name: "numButtons", value: cmd.supportedGroupings, displayed: false)
+        response << createEvent(name: "numberOfButtons", value: cmd.supportedGroupings, displayed: false)
 
         response << associateHub()
   }
     else {
       response << createEvent(name: "numButtons", value: cmd.supportedGroupings, displayed: false)
+      response << createEvent(name: "numberOfButtons", value: cmd.supportedGroupings, displayed: false)
     }
     return response
 }

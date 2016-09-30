@@ -1,9 +1,9 @@
 /**
  *  ZWN-SC7 Enerwave 7 Button Scene Controller
  *
- *	Author: Matt Frank based on VRCS Button Controller by Brian Dahlem, based on SmartThings Button Controller
- *	Date Created: 2014-12-18
- *  Last Updated: 2015-02-13
+ *  Author: Matt Frank based on VRCS Button Controller by Brian Dahlem, based on SmartThings Button Controller
+ *  Date Created: 2014-12-18
+ *  Last Updated: 2016-09-30
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -13,6 +13,8 @@
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
  *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
  *  for the specific language governing permissions and limitations under the License.
+ *
+ *  2016-09-30 Modified to allow for correct event value "pushed" and added numberOfButtons as per ST documentation
  *
  */
 

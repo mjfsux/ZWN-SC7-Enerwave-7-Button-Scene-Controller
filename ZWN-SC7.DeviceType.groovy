@@ -1,9 +1,9 @@
 /**
  *  ZWN-SC7 Enerwave 7 Button Scene Controller
  *
- *	Author: Matt Frank based on VRCS Button Controller by Brian Dahlem, based on SmartThings Button Controller
- *	Date Created: 2014-12-18
- *  Last Updated: 2015-02-13
+ *  Author: Matt Frank based on VRCS Button Controller by Brian Dahlem, based on SmartThings Button Controller
+ *  Date Created: 2014-12-18
+ *  Last Updated: 2017-05-10 update DT to support pushed as @ady624 
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -13,6 +13,8 @@
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
  *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
  *  for the specific language governing permissions and limitations under the License.
+ *
+ *  2016-09-30 Modified to allow for correct event value "pushed" and added numberOfButtons as per ST documentation
  *
  */
 
@@ -27,6 +29,7 @@
 
         attribute "currentButton", "STRING"
         attribute "numButtons", "STRING"
+        attribute "numberOfButtons", "NUMBER"
 
     fingerprint deviceId: "0x0202", inClusters:"0x21, 0x2D, 0x85, 0x86, 0x72"
     fingerprint deviceId: "0x0202", inClusters:"0x2D, 0x85, 0x86, 0x72"
@@ -93,7 +96,7 @@ def buttonEvent(button) {
 
     if (button > 0) {
         // update the device state, recording the button press
-        result << createEvent(name: "button", value: /*"pushed"*/ "button $button", data: [buttonNumber: button], descriptionText: "$device.displayName button $button was pushed", isStateChange: true)
+        result << createEvent(name: "button", value: "pushed", data: [buttonNumber: button], descriptionText: "$device.displayName button $button was pushed", isStateChange: true)
 
         // turn off the button LED
         result << response(zwave.sceneActuatorConfV1.sceneActuatorConfReport(dimmingDuration: 255, level: 255, sceneId: 0))
@@ -170,15 +173,18 @@ def zwaveEvent(physicalgraph.zwave.commands.associationv2.AssociationGroupingsRe
   def response = []
 
     log.debug "${getDataByName("numButtons")} buttons stored"
-  if (getDataByName("numButtons") != "$cmd.supportedGroupings") {
-    updateState("numButtons", "$cmd.supportedGroupings")
+  if ((getDataByName("numButtons") != "$cmd.supportedGroupings") || (getDataByName("numberOfButtons") != (int) cmd.supportedGroupings)) {
+        updateState("numButtons", "$cmd.supportedGroupings")
+        updateState("numberOfButtons", (int) cmd.supportedGroupings)
         log.debug "${cmd.supportedGroupings} groups available"
         response << createEvent(name: "numButtons", value: cmd.supportedGroupings, displayed: false)
+        response << createEvent(name: "numberOfButtons", value: cmd.supportedGroupings, displayed: false)
 
         response << associateHub()
   }
     else {
       response << createEvent(name: "numButtons", value: cmd.supportedGroupings, displayed: false)
+      response << createEvent(name: "numberOfButtons", value: cmd.supportedGroupings, displayed: false)
     }
     return response
 }
